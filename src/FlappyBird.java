@@ -14,13 +14,8 @@ public class FlappyBird extends Canvas {
 
     // Métodos
     public void frame(){
-
-        Dimension dimension = new Dimension(WIDTH, HEIGHT);
-        this.setPreferredSize(dimension);
-
         JFrame tela = new JFrame("Flappy Bird");
-        tela.add(this);
-        tela.pack();
+        tela.setSize(WIDTH, HEIGHT);
         tela.setVisible(true);
         tela.setResizable(false);
         tela.setLocationRelativeTo(null);
