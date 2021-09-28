@@ -1,11 +1,17 @@
+import sprites.Background;
+import sprites.Bird;
+import sprites.Chao;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferStrategy;
 
-public class FlappyBird extends Canvas {
+public class FlappyBird extends Canvas implements Runnable{
 
     // Atributos
-    private final int WIDTH = 320;
-    private final int HEIGHT = 480;
+    private final Bird bird = new Bird();
+    private final Chao chao = new Chao();
+    private final Background background = new Background();
 
     // Construtor
     public FlappyBird(){
@@ -14,20 +20,51 @@ public class FlappyBird extends Canvas {
 
     // Métodos
     public void frame(){
+
+        this.setPreferredSize(new Dimension(320, 480));
+
         JFrame tela = new JFrame("Flappy Bird");
-        tela.setSize(WIDTH, HEIGHT);
+        tela.add(this);
+        tela.pack();
         tela.setVisible(true);
         tela.setResizable(false);
         tela.setLocationRelativeTo(null);
         tela.setDefaultCloseOperation(tela.EXIT_ON_CLOSE);
     }
 
+    public void update() { }
+
+    public void render() {
+        BufferStrategy bs = getBufferStrategy();
+        if (bs == null){
+            this.createBufferStrategy(3);
+            return;
+        }
+
+        Graphics g = bs.getDrawGraphics();
+
+        background.draw(g);
+        chao.draw(g);
+        bird.draw(g);
+
+        g.dispose();
+        bs.show();
+    }
+
     @Override
-    public void update(Graphics g) {
-        super.update(g);
+    public void run() {
+        while(true){
+            update();
+            render();
+            try {
+                Thread.sleep(16);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void main(String[] args) {
-        new FlappyBird();
+        new Thread(new FlappyBird()).start();
     }
 }

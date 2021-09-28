@@ -18,7 +18,7 @@ public class BaseSprites {
     private int largura;
     private int altura;
 
-    private final ImageIcon imageIcon = new ImageIcon("/sprites/sprites.png");
+    private final ImageIcon imageIcon = new ImageIcon("src/sprites/sprites.png");
     private final Image sprite = imageIcon.getImage();
 
     // Getters
@@ -34,6 +34,8 @@ public class BaseSprites {
 
     public int getLargura() { return largura; }
     public int getAltura() { return altura; }
+
+    public Image getSprite() { return sprite; }
 
     // Setters
     public void setDx1(int dx1) { this.dx1 = dx1; }
