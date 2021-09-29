@@ -4,6 +4,10 @@ import java.awt.*;
 
 public class Chao extends BaseSprites{
 
+    // Atributos
+    private int dx1 = 224; // nova variável do dx1 para o chão
+    private int dx2 = 448; // nova variável do dx2 para o chão
+
     // Construtor
     public Chao(){
         setLargura(224);
@@ -26,8 +30,8 @@ public class Chao extends BaseSprites{
         super.draw(g);
 
         g.drawImage(getSprite(),
-                getDx1(), getDy1(),
-                (getDx2() + getLargura()), getDy2(),
+                dx1, getDy1(),
+                dx2, getDy2(),
                 getSx1(), getSy1(),
                 getSx2(), getSy2(), null);
     }
@@ -36,10 +40,14 @@ public class Chao extends BaseSprites{
     public void movimentar(){
         setDx1(getDx1() - 2);
         setDx2(getDx2() - 2);
+        dx1 -= 2;
+        dx2 -= 2;
 
         if (getDx2() == 112){
             setDx1(0);
-            setDx2(getLargura());
+            setDx2(224);
+            dx1 = 224;
+            dx2 = 448;
         }
     }
 }
