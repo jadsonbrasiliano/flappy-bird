@@ -26,9 +26,20 @@ public class Chao extends BaseSprites{
         super.draw(g);
 
         g.drawImage(getSprite(),
-                getLargura(), getDy1(),
+                getDx1(), getDy1(),
                 (getDx2() + getLargura()), getDy2(),
                 getSx1(), getSy1(),
                 getSx2(), getSy2(), null);
+    }
+
+    // Movimentação do chão
+    public void movimentar(){
+        setDx1(getDx1() - 2);
+        setDx2(getDx2() - 2);
+
+        if (getDx2() == 112){
+            setDx1(0);
+            setDx2(getLargura());
+        }
     }
 }

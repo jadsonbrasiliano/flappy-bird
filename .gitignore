@@ -1,0 +1,4 @@
+# arquivos a serem ignorados
+.idea
+out
+flappy-bird.iml

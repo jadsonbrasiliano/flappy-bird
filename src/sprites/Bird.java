@@ -17,4 +17,10 @@ public class Bird extends BaseSprites{
         setDx2(getDx1() + getLargura());
         setDy2(getDy1() + getAltura());
     }
+
+    // Movimentação do bird
+    public void movimentar(){
+        setDy1(getDy1() + 1);
+        setDy2(getDy2() + 1);
+    }
 }

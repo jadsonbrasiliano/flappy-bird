@@ -12,9 +12,11 @@ public class FlappyBird extends Canvas implements Runnable{
     private final Bird bird = new Bird();
     private final Chao chao = new Chao();
     private final Background background = new Background();
+    private boolean gameLoop;
 
     // Construtor
     public FlappyBird(){
+        gameLoop = true;
         frame();
     }
 
@@ -32,7 +34,10 @@ public class FlappyBird extends Canvas implements Runnable{
         tela.setDefaultCloseOperation(tela.EXIT_ON_CLOSE);
     }
 
-    public void update() { }
+    public void update() {
+        chao.movimentar();
+        bird.movimentar();
+    }
 
     public void render() {
         BufferStrategy bs = getBufferStrategy();
@@ -53,7 +58,7 @@ public class FlappyBird extends Canvas implements Runnable{
 
     @Override
     public void run() {
-        while(true){
+        while(gameLoop){
             update();
             render();
             try {
