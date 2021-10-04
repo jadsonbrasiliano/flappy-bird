@@ -1,8 +1,10 @@
-package sprites;
+package sprites.objetos;
+
+import sprites.BaseSprites;
 
 import java.awt.*;
 
-public class Chao extends BaseSprites{
+public class Chao extends BaseSprites {
 
     // Atributos
     private int dx1 = 224; // nova variável do dx1 para o chão

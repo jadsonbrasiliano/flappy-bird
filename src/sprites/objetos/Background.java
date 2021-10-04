@@ -1,8 +1,10 @@
-package sprites;
+package sprites.objetos;
+
+import sprites.BaseSprites;
 
 import java.awt.*;
 
-public class Background extends BaseSprites{
+public class Background extends BaseSprites {
 
     // Construtor
     public Background(){

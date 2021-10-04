@@ -1,14 +1,15 @@
-import sprites.Background;
-import sprites.Bird;
-import sprites.Canos;
-import sprites.Chao;
+import sprites.objetos.Background;
+import sprites.objetos.Bird;
+import sprites.objetos.Canos;
+import sprites.objetos.Chao;
+import sprites.telas.GameOver;
+import sprites.telas.GetReady;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferStrategy;
-import java.util.Random;
 
 public class FlappyBird extends Canvas implements Runnable, MouseListener {
 
@@ -17,16 +18,29 @@ public class FlappyBird extends Canvas implements Runnable, MouseListener {
     private final Chao chao = new Chao();
     private final Background background = new Background();
     private final Canos[] canos = { new Canos(), new Canos(), new Canos(), new Canos() };
-    private boolean gameLoop;
+
+    private final GetReady getReady = new GetReady();
+    private final GameOver gameOver = new GameOver();
+
+    private int frames;
+    private final boolean gameLoop;
+    private boolean telaGetReady;
+    private boolean telaGameOver;
 
     // Construtor
     public FlappyBird(){
         gameLoop = true;
+        telaGetReady = true;
         frame();
         this.addMouseListener(this);
     }
 
     // Métodos
+
+    public static void main(String[] args) {
+        new Thread(new FlappyBird()).start();
+    }
+
     public void frame(){
 
         this.setPreferredSize(new Dimension(320, 480));
@@ -41,26 +55,52 @@ public class FlappyBird extends Canvas implements Runnable, MouseListener {
     }
 
     public void update() {
+        // Animação do bird
+        bird.animar(frames);
+        if (frames == 20){ frames = 0; }
+        frames++;
+
+        // Movimentação dos objetos
         chao.movimentar();
-        bird.gravidade();
-        for (Canos cano : canos){ cano.movimentar(canos); }
+        if(!telaGetReady){
+            if (!telaGameOver){
+                bird.gravidade();
+                for (Canos cano : canos){ cano.movimentar(canos); }
+            }
+        }
+
+        // Após a colisão volta pro início
+        if (telaGameOver){
+            int posicao = 0;
+            bird.valorInicial();
+            for (Canos cano : canos){
+                cano.valorInicial(cano, posicao);
+                posicao++;
+            }
+        }
+
         colisao();
     }
 
     public void render() {
+
+        // Criando o Buffer
         BufferStrategy bs = getBufferStrategy();
         if (bs == null){
             this.createBufferStrategy(3);
             return;
         }
 
+        // Pegando os gráficos do buffer para desenhar
         Graphics g = bs.getDrawGraphics();
 
+        // Desenhando no Buffer
         background.draw(g);
         for(Canos cano : canos){ cano.draw(g); }
         chao.draw(g);
         bird.draw(g);
-
+        if (telaGetReady){ getReady.draw(g); }
+        if (telaGameOver){ gameOver.draw(g); }
         g.dispose();
         bs.show();
     }
@@ -68,31 +108,23 @@ public class FlappyBird extends Canvas implements Runnable, MouseListener {
     public void colisao(){
 
         // Colisão com o chão
-        if (bird.getDy2() == chao.getDy1()){
-            gameLoop = false;
-        }
+        if (bird.getDy2() == chao.getDy1()){ telaGameOver = true; }
 
         // Colisão com o cano
         for(Canos cano : canos){
 
             // Colisão com o cano de cima
             if (bird.getDx1() > cano.getSdx1() && bird.getDx1() <= cano.getSdx2()
-                    || bird.getDx2()-4 > cano.getSdx1() && bird.getDx2() <= cano.getSdx2()) {
+                    || bird.getDx2() > cano.getSdx1() && bird.getDx2() <= cano.getSdx2()) {
 
-                if (bird.getDy1() < cano.getSdy2()){
-                    System.out.println("O bird colidiu com a parte de cima");
-                    gameLoop = false;
-                }
+                if (bird.getDy1() < cano.getSdy2()){ telaGameOver = true; }
             }
 
             // Colisão com o cano de baixo
             if (bird.getDx1() > cano.getDx1() && bird.getDx1() <= cano.getDx2()
                     || bird.getDx2() > cano.getDx1() && bird.getDx2() <= cano.getDx2()) {
 
-                if (bird.getDy2() > cano.getDy1()+2){
-                    System.out.println("O bird colidiu com a parte de baixo");
-                    gameLoop = false;
-                }
+                if (bird.getDy2() > cano.getDy1()){ telaGameOver = true; }
             }
         }
     }
@@ -110,14 +142,14 @@ public class FlappyBird extends Canvas implements Runnable, MouseListener {
         }
     }
 
-    public static void main(String[] args) {
-        new Thread(new FlappyBird()).start();
-    }
-
     @Override
     public void mouseReleased(MouseEvent e) {
         int keyCode = e.getButton();
-        if (keyCode == MouseEvent.BUTTON1){ bird.pular(); }
+        if (keyCode == MouseEvent.BUTTON1){
+            if (telaGetReady) { telaGetReady = false; }
+            else if (telaGameOver) { telaGameOver = false; }
+            else{ bird.pular(); }
+        }
     }
     @Override
     public void mouseClicked(MouseEvent e) { }

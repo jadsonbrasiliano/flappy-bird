@@ -1,4 +1,6 @@
-package sprites;
+package sprites.objetos;
+
+import sprites.BaseSprites;
 
 import java.awt.*;
 import java.util.Random;
@@ -14,8 +16,7 @@ public class Canos extends BaseSprites {
     private int sdy2 = sdy1 + 400;
 
     public Canos(){
-
-        // Cano inferior
+        // Cano Inferior
         setLargura(52);
         setAltura(400);
         setSx1(0);
@@ -44,6 +45,22 @@ public class Canos extends BaseSprites {
                 52, getSy1(),
                 104, getSy2(), null);
     }
+
+    public void valorInicial(Canos cano, int posicao){
+        aumentar = 320;
+        if (posicao > 0){ aumentar+=156 * posicao; }
+
+        cano.setSdx1(aumentar);
+        cano.setSdy1(-random());
+        cano.setSdx2(cano.getSdx1() + cano.getLargura());
+        cano.setSdy2(cano.getSdy1() + cano.getAltura());
+
+        cano.setDx1(aumentar);
+        cano.setDy1(cano.getAltura() + 90 + sdy1);
+        cano.setDx2(cano.getDx1() + cano.getLargura());
+        cano.setDy2(cano.getDy1() + cano.getAltura());
+    }
+
 
     public int random(){
         Random random = new Random();
