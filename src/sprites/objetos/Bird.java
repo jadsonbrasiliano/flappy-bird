@@ -9,12 +9,12 @@ public class Bird extends BaseSprites {
 
     // Movimentação do bird
     public void gravidade(){
-        setDy1(getDy1() + 3);
-        setDy2(getDy2() + 3);
+        setDy1(getDy1() + 4);
+        setDy2(getDy2() + 4);
     }
 
     public void pular(){
-        setDy1(getDy1() - 30);
+        setDy1(getDy1() - 36);
         setDy2(getDy1() + getAltura());
     }
 

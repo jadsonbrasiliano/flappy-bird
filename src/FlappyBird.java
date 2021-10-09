@@ -10,6 +10,8 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferStrategy;
+import java.io.File;
+import java.io.IOException;
 
 public class FlappyBird extends Canvas implements Runnable, MouseListener {
 
@@ -22,8 +24,13 @@ public class FlappyBird extends Canvas implements Runnable, MouseListener {
     private final GetReady getReady = new GetReady();
     private final GameOver gameOver = new GameOver();
 
+    private int score;
+    private int best;
     private int frames;
-    private final boolean gameLoop;
+
+    private final Color branco = new Color(229, 253, 211);
+
+    private boolean gameLoop;
     private boolean telaGetReady;
     private boolean telaGameOver;
 
@@ -54,6 +61,11 @@ public class FlappyBird extends Canvas implements Runnable, MouseListener {
         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
     }
 
+    public Font fonteStart2P() throws IOException, FontFormatException {
+        File caminho = new File("fonte/PressStart2P-Regular.ttf");
+        return Font.createFont(Font.TRUETYPE_FONT, caminho);
+    }
+
     public void update() {
         // Animação do bird
         bird.animar(frames);
@@ -79,10 +91,18 @@ public class FlappyBird extends Canvas implements Runnable, MouseListener {
             }
         }
 
+        // Verifica a pontuação
+        for (Canos cano : canos){
+            if (bird.getDx2() == cano.getDx2()){ score++; }
+        }
+
+        // Verifica se a pontuação é maior que a anterior
+        if (score > best){ best = score; }
+
         colisao();
     }
 
-    public void render() {
+    public void render() throws IOException, FontFormatException {
 
         // Criando o Buffer
         BufferStrategy bs = getBufferStrategy();
@@ -94,13 +114,29 @@ public class FlappyBird extends Canvas implements Runnable, MouseListener {
         // Pegando os gráficos do buffer para desenhar
         Graphics g = bs.getDrawGraphics();
 
+        // Chamando a fonte
+        Font fonte = fonteStart2P();
+
         // Desenhando no Buffer
         background.draw(g);
+        if (!telaGameOver && !telaGetReady) {
+            g.setColor(branco);
+            g.setFont(fonte.deriveFont(Font.PLAIN, 26));
+            g.drawString(String.valueOf(score), 160, 90);
+        }
         for(Canos cano : canos){ cano.draw(g); }
         chao.draw(g);
         bird.draw(g);
         if (telaGetReady){ getReady.draw(g); }
-        if (telaGameOver){ gameOver.draw(g); }
+        if (telaGameOver){
+            gameOver.medalha(score);
+            gameOver.draw(g);
+            g.setColor(branco);
+            g.setFont(fonte.deriveFont(Font.PLAIN, 15));
+            g.drawString(String.valueOf(score), 215, 135);
+            g.drawString(String.valueOf(best), 215, 180);
+        }
+
         g.dispose();
         bs.show();
     }
@@ -108,7 +144,7 @@ public class FlappyBird extends Canvas implements Runnable, MouseListener {
     public void colisao(){
 
         // Colisão com o chão
-        if (bird.getDy2() == chao.getDy1()){ telaGameOver = true; }
+        if (bird.getDy2() >= chao.getDy1()){ telaGameOver = true; }
 
         // Colisão com o cano
         for(Canos cano : canos){
@@ -133,28 +169,35 @@ public class FlappyBird extends Canvas implements Runnable, MouseListener {
     public void run() {
         while(gameLoop){
             update();
-            render();
-            try {
-                Thread.sleep(20);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            try { render(); }
+            catch (IOException | FontFormatException e) { e.printStackTrace(); }
+            try { Thread.sleep(20); }
+            catch (InterruptedException e) {
+                gameLoop = false;
+                Thread.currentThread().interrupt();
             }
         }
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mousePressed(MouseEvent e) {
         int keyCode = e.getButton();
         if (keyCode == MouseEvent.BUTTON1){
             if (telaGetReady) { telaGetReady = false; }
-            else if (telaGameOver) { telaGameOver = false; }
-            else{ bird.pular(); }
+            else if (telaGameOver) {
+                score = 0;
+                telaGameOver = false;
+            }
+            else{
+                bird.pular();
+                gameOver.medalhaValorInicial();
+            }
         }
     }
     @Override
-    public void mouseClicked(MouseEvent e) { }
+    public void mouseReleased(MouseEvent e) { }
     @Override
-    public void mousePressed(MouseEvent e) { }
+    public void mouseClicked(MouseEvent e) { }
     @Override
     public void mouseEntered(MouseEvent e) { }
     @Override

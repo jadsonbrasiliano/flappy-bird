@@ -29,7 +29,7 @@ public class Canos extends BaseSprites {
         setDx2(getDx1() + getLargura());
         setDy2(getDy1() + getAltura());
 
-        aumentar += 156;
+        aumentar += 208;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class Canos extends BaseSprites {
 
     public void valorInicial(Canos cano, int posicao){
         aumentar = 320;
-        if (posicao > 0){ aumentar+=156 * posicao; }
+        if (posicao > 0){ aumentar+=208 * posicao; }
 
         cano.setSdx1(aumentar);
         cano.setSdy1(-random());
@@ -85,10 +85,10 @@ public class Canos extends BaseSprites {
                 cano.setSdy1(-numeroRandom);
                 cano.setSdy2(cano.getSdy1() + cano.getAltura());
 
-                cano.setDx1(572);
-                cano.setDx2(624);
-                cano.setSdx1(572);
-                cano.setSdx2(624);
+                cano.setDx1(780);
+                cano.setDx2(832);
+                cano.setSdx1(780);
+                cano.setSdx2(832);
             }
         }
     }
